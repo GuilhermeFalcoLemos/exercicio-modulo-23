@@ -1,4 +1,4 @@
-name: EBAC CI
+name: teste CI
 
 on:
   push:
@@ -7,9 +7,18 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout projeto de testes
@@ -49,9 +58,13 @@ jobs:
           echo "Conteúdo do mochawesome-report:"
           ls -la mochawesome-report || true
 
-      - name: Publicar relatório no GitHub Pages
+      - name: Upload do relatório
         if: success()
-        uses: peaceiris/actions-gh-pages@v4
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./mochawesome-report
+          path: ./mochawesome-report
+
+      - name: Publicar no GitHub Pages
+        if: success()
+        id: deployment
+        uses: actions/deploy-pages@v4
