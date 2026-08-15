@@ -2,8 +2,7 @@ name: teste CI
 
 on:
   push:
-    branches:
-      - feature/ci
+    branches: [ feature/ci ]
 
   workflow_dispatch:
 
@@ -12,16 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout projeto de testes
         uses: actions/checkout@v4
+
+      - name: Checkout aplicação
+        uses: actions/checkout@v4
+        with:
+          repository: GuilhermeFalcoLemos/hub-de-leitura-integrado
+          path: hub-de-leitura-integrado
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '20'
 
-      - name: Install dependencies
+      - name: Install dependencies dos testes
+        run: npm ci
+
+      - name: Install dependencies da aplicação
+        working-directory: hub-de-leitura-integrado
         run: npm ci
 
       - name: Run Cypress
@@ -30,6 +38,9 @@ jobs:
         with:
           install: false
           browser: chrome
+          start: cd hub-de-leitura-integrado && npm start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 120
 
       - name: Generate Mochawesome report
         if: always()
