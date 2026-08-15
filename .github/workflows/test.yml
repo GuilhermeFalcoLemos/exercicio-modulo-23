@@ -1,4 +1,4 @@
-name: teste CI
+name: teste  CI
 
 on:
   push:
@@ -25,11 +25,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies dos testes
-        run: npm ci
-
       - name: Install dependencies da aplicação
         working-directory: hub-de-leitura-integrado
+        run: npm ci
+
+      - name: Install dependencies dos testes
         run: npm ci
 
       - name: Run Cypress
