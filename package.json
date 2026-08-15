@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "test": "cypress run",
-  "report:merge": "mochawesome-merge \"mochawesome-report/*.json\" -o mochawesome-report/mochawesome.json",
-  "report:generate": "marge mochawesome-report/mochawesome.json -o mochawesome-report -f index",
-  "test:report": "npm run test && npm run report:merge && npm run report:generate"
-},
+    "test": "cypress run",
+    "report:merge": "mochawesome-merge \"mochawesome-report/*.json\" -o mochawesome-report/mochawesome.json",
+    "report:generate": "marge mochawesome-report/mochawesome.json -o mochawesome-report -f index",
+    "test:report": "npm run test && npm run report:merge && npm run report:generate",
+    "ci": "start-server-and-test \"cd ../hub-de-leitura-integrado && npm start\" http://localhost:3000 test:report"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/EBAC-QE/teste-cy-base.git"
@@ -27,6 +28,7 @@
   "devDependencies": {
     "mochawesome": "^8.0.1",
     "mochawesome-merge": "^5.1.1",
-    "mochawesome-report-generator": "^6.3.2"
+    "mochawesome-report-generator": "^6.3.2",
+    "start-server-and-test": "^3.0.12"
   }
 }
