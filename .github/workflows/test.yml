@@ -1,0 +1,45 @@
+name: teste CI
+
+on:
+  push:
+    branches:
+      - feature/ci
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        continue-on-error: true
+        with:
+          install: false
+          browser: chrome
+
+      - name: Generate Mochawesome report
+        if: always()
+        run: |
+          npx mochawesome-merge "mochawesome-report/*.json" -o mochawesome-report/mochawesome.json
+          npx marge mochawesome-report/mochawesome.json -o mochawesome-report -f index
+
+      - name: Publish Report
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./mochawesome-report
