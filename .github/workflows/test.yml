@@ -1,4 +1,4 @@
-name: teste  CI
+name: teste CI
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout projeto de testes
         uses: actions/checkout@v4
 
-      - name: Checkout aplicação
+      - name: Checkout Hub de Leitura
         uses: actions/checkout@v4
         with:
           repository: GuilhermeFalcoLemos/hub-de-leitura-integrado
@@ -25,30 +25,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies da aplicação
+      - name: Instalar dependências do Hub
         working-directory: hub-de-leitura-integrado
         run: npm ci
 
-      - name: Install dependencies dos testes
+      - name: Instalar dependências dos testes
         run: npm ci
 
-      - name: Run Cypress
-        uses: cypress-io/github-action@v6
-        continue-on-error: true
-        with:
-          install: false
-          browser: chrome
-          start: cd hub-de-leitura-integrado && npm start
-          wait-on: http://localhost:3000
-          wait-on-timeout: 120
+      - name: Executar testes e gerar relatório
+        run: npm run ci
 
-      - name: Generate Mochawesome report
-        if: always()
-        run: |
-          npx mochawesome-merge "mochawesome-report/*.json" -o mochawesome-report/mochawesome.json
-          npx marge mochawesome-report/mochawesome.json -o mochawesome-report -f index
-
-      - name: Publish Report
+      - name: Publicar relatório
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
