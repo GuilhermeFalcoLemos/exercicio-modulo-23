@@ -1,8 +1,9 @@
-name: teste CI
+name: EBAC CI
 
 on:
   push:
-    branches: [ feature/ci ]
+    branches:
+      - feature/ci
 
   workflow_dispatch:
 
@@ -23,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Instalar dependências do Hub
         working-directory: hub-de-leitura-integrado
@@ -32,11 +33,24 @@ jobs:
       - name: Instalar dependências dos testes
         run: npm ci
 
-      - name: Executar testes e gerar relatório
-        run: npm run ci
+      - name: Iniciar Hub de Leitura
+        working-directory: hub-de-leitura-integrado
+        run: npm start &
 
-      - name: Publicar relatório
+      - name: Aguardar aplicação
+        run: npx wait-on http://localhost:3000
+
+      - name: Executar testes e gerar relatório
+        run: npm run test:report
+
+      - name: Verificar relatório
         if: always()
+        run: |
+          echo "Conteúdo do mochawesome-report:"
+          ls -la mochawesome-report || true
+
+      - name: Publicar relatório no GitHub Pages
+        if: success()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
