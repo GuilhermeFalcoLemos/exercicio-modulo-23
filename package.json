@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "test": "cypress run",
+  "report:merge": "mochawesome-merge \"mochawesome-report/*.json\" -o mochawesome-report/mochawesome.json",
+  "report:generate": "marge mochawesome-report/mochawesome.json -o mochawesome-report -f index",
+  "test:report": "npm run test && npm run report:merge && npm run report:generate"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/EBAC-QE/teste-cy-base.git"
@@ -20,5 +23,10 @@
   "homepage": "https://github.com/EBAC-QE/teste-cy-base#readme",
   "dependencies": {
     "cypress": "^14.5.4"
+  },
+  "devDependencies": {
+    "mochawesome": "^8.0.1",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2"
   }
 }
